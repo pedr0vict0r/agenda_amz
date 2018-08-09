@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org" 
+	  xmlns:layout="https://github.com/ultraq/thymeleaf-layout-dialect">
+	  
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    
+    <!-- Bootstrap CSS CDN -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" ></link>
+    
+    <link rel="stylesheet" href="css/style.css" />
+    
+	<!-- Bootstrap CSS 
+	<link rel="stylesheet" href="css/bootstrap.min.css" ></link>
+	-->
+	
+	<!-- Font Awesome JS -->
+    <script src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js"></script>
+    <script src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js"></script>
+</head>
+
+<body>
+	
+	<div class="alert alert-warning alert-dismissible" role="alert" th:if="${not #strings.isEmpty(msgErro)}">
+  		<strong>Erro! </strong><span th:text="${msgErro}"></span>
+	</div>
+
+	<div class="alert alert-success alert-dismissible" role="alert" th:if="${not #strings.isEmpty(msgSucesso)}">
+	  <strong>Successo! </strong><span th:text="${msgSucesso}"></span>
+	</div>
+
+</body>
+</html>

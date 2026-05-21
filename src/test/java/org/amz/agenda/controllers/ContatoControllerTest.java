@@ -95,8 +95,10 @@ class ContatoControllerTest {
 
 	@Test
 	void deveSalvarAlteracaoDoContato() throws Exception {
+		when(contatoRepository.findByCodigo(3L)).thenReturn(contato(3L, "Carlos", "(41) 96666-5555"));
+
 		mockMvc.perform(post("/contatos/3/editar")
-				.param("codigo", "999")
+				.param("codigo", "3")
 				.param("nome", "Carlos")
 				.param("numero", "(41) 96666-5555"))
 				.andExpect(status().is3xxRedirection())

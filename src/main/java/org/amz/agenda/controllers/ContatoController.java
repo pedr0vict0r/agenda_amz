@@ -84,6 +84,12 @@ public class ContatoController {
 	
 	@PostMapping("/contatos/{codigo}/editar")
 	public String salvarAlteracao(@PathVariable("codigo") long codigo, @Valid Contato contato, BindingResult result, RedirectAttributes attributes) {
+
+			Contato contatoAtual = cr.findByCodigo(codigo);
+			if (contatoAtual == null) {
+				attributes.addFlashAttribute("msgErro", "Contato não encontrado!");
+				return "redirect:/contatos";
+			}
 	
 			if(result.hasErrors()) {
 				attributes.addFlashAttribute("msgErro", "Verifique os campos!");

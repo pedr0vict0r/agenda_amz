@@ -3,7 +3,7 @@ package org.amz.agenda.repository;
 import org.amz.agenda.models.Contato;
 import org.springframework.data.repository.CrudRepository;
 
-public interface ContatoRepository extends CrudRepository<Contato, String>{
+public interface ContatoRepository extends CrudRepository<Contato, Long>{
 	
 	Contato findByCodigo(long codigo);
 

@@ -7,9 +7,9 @@ import org.amz.agenda.repository.ContatoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -19,12 +19,12 @@ public class ContatoController {
 	@Autowired
 	private ContatoRepository cr;
 	
-	@RequestMapping(value="/cadastrarContato", method=RequestMethod.GET)
+	@GetMapping("/cadastrarContato")
 	public String form() {
 		return "contato/formContato";
 	}
 	
-	@RequestMapping(value="/cadastrarContato", method=RequestMethod.POST)
+	@PostMapping("/cadastrarContato")
 	public String form(@Valid Contato contato, BindingResult result, RedirectAttributes attributes) {
 		
 		if(result.hasErrors()) {
@@ -36,7 +36,7 @@ public class ContatoController {
 		return "redirect:/cadastrarContato";
 	}
 	
-	@RequestMapping("/contatos")
+	@GetMapping("/contatos")
 	public ModelAndView listaContatos() {
 		ModelAndView mv = new ModelAndView("/contato/listaContatos");
 		Iterable<Contato> contatos = cr.findAll();
@@ -45,41 +45,61 @@ public class ContatoController {
 	}
 	
 	
-	@RequestMapping("/{codigo}")
-	public ModelAndView detalhesContato(@PathVariable("codigo") long codigo) {
+	@GetMapping("/contatos/{codigo}")
+	public ModelAndView detalhesContato(@PathVariable("codigo") long codigo, RedirectAttributes attributes) {
 		Contato contato = cr.findByCodigo(codigo);
-		ModelAndView mv = new ModelAndView("contato/detalhesContato");
+		ModelAndView mv;
+		if (contato == null) {
+			attributes.addFlashAttribute("msgErro", "Contato não encontrado!");
+			return new ModelAndView("redirect:/contatos");
+		}
+		mv = new ModelAndView("contato/detalhesContato");
 		mv.addObject("contato", contato);
-		System.out.println("contato" + contato);
 		return mv;
 	}
 	
-	@RequestMapping("/deletar")
-	public String deletarContato(long codigo) {
+	@PostMapping("/contatos/{codigo}/excluir")
+	public String deletarContato(@PathVariable("codigo") long codigo, RedirectAttributes attributes) {
 		Contato contato = cr.findByCodigo(codigo);
+		if (contato == null) {
+			attributes.addFlashAttribute("msgErro", "Contato não encontrado!");
+			return "redirect:/contatos";
+		}
 		cr.delete(contato);
+		attributes.addFlashAttribute("msgSucesso", "Contato excluído com sucesso!");
 		return "redirect:/contatos";
 	}
 	
-	@RequestMapping("/editar")
-	public ModelAndView editarContato(long codigo) {
+	@GetMapping("/contatos/{codigo}/editar")
+	public ModelAndView editarContato(@PathVariable("codigo") long codigo, RedirectAttributes attributes) {
 		Contato contato = cr.findByCodigo(codigo);
+		if (contato == null) {
+			attributes.addFlashAttribute("msgErro", "Contato não encontrado!");
+			return new ModelAndView("redirect:/contatos");
+		}
 		ModelAndView mv = new ModelAndView("contato/editarContato");
 		mv.addObject("contato", contato);
-		System.out.println("contato" + contato);
 		return mv;
 	}
 	
-	@RequestMapping("/salvar")
-	public String salvarAlteracao(@Valid Contato contato, BindingResult result, RedirectAttributes attributes) {
+	@PostMapping("/contatos/{codigo}/editar")
+	public ModelAndView salvarAlteracao(@PathVariable("codigo") long codigo, @Valid Contato contato, BindingResult result, RedirectAttributes attributes) {
+
+			Contato contatoAtual = cr.findByCodigo(codigo);
+			if (contatoAtual == null) {
+				attributes.addFlashAttribute("msgErro", "Contato não encontrado!");
+				return new ModelAndView("redirect:/contatos");
+			}
 	
 			if(result.hasErrors()) {
-				attributes.addFlashAttribute("msgErro", "Verifique os campos!");
-				return "redirect:/contatos";
+				ModelAndView mv = new ModelAndView("contato/editarContato");
+				mv.addObject("contato", contato);
+				return mv;
 			}
+			contato.setCodigo(codigo);
 			cr.save(contato);
 			attributes.addFlashAttribute("msgSucesso", "Contato alterado com sucesso!");
-			return "redirect:/contatos";
+			return new ModelAndView("redirect:/contatos");
 	}
 
 }

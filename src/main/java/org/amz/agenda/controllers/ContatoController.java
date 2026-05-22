@@ -83,22 +83,23 @@ public class ContatoController {
 	}
 	
 	@PostMapping("/contatos/{codigo}/editar")
-	public String salvarAlteracao(@PathVariable("codigo") long codigo, @Valid Contato contato, BindingResult result, RedirectAttributes attributes) {
+	public ModelAndView salvarAlteracao(@PathVariable("codigo") long codigo, @Valid Contato contato, BindingResult result, RedirectAttributes attributes) {
 
 			Contato contatoAtual = cr.findByCodigo(codigo);
 			if (contatoAtual == null) {
 				attributes.addFlashAttribute("msgErro", "Contato não encontrado!");
-				return "redirect:/contatos";
+				return new ModelAndView("redirect:/contatos");
 			}
 	
 			if(result.hasErrors()) {
-				attributes.addFlashAttribute("msgErro", "Verifique os campos!");
-				return "redirect:/contatos";
+				ModelAndView mv = new ModelAndView("contato/editarContato");
+				mv.addObject("contato", contato);
+				return mv;
 			}
 			contato.setCodigo(codigo);
 			cr.save(contato);
 			attributes.addFlashAttribute("msgSucesso", "Contato alterado com sucesso!");
-			return "redirect:/contatos";
+			return new ModelAndView("redirect:/contatos");
 	}
 
 }

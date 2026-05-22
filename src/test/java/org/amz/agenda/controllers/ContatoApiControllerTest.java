@@ -5,6 +5,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -63,6 +64,7 @@ Contato salvo = contato(11L, "Paulo", "(41) 98888-7777");
 when(contatoRepository.save(any(Contato.class))).thenReturn(salvo);
 
 mockMvc.perform(post("/api/contatos")
+.with(csrf())
 .contentType(MediaType.APPLICATION_JSON)
 .content("{\"nome\":\"Paulo\",\"numero\":\"(41) 98888-7777\"}"))
 .andExpect(status().isCreated())
@@ -74,6 +76,7 @@ verify(contatoRepository, times(1)).save(any(Contato.class));
 @Test
 void naoDeveCriarContatoSemAutenticacaoViaApi() throws Exception {
 mockMvc.perform(post("/api/contatos")
+.with(csrf())
 .contentType(MediaType.APPLICATION_JSON)
 .content("{\"nome\":\"Paulo\",\"numero\":\"(41) 98888-7777\"}"))
 .andExpect(status().isUnauthorized());
@@ -88,6 +91,7 @@ when(contatoRepository.findByCodigo(12L)).thenReturn(contato(12L, "Carlos", "(41
 when(contatoRepository.save(any(Contato.class))).thenReturn(contato(12L, "Carlos Atualizado", "(41) 91111-1111"));
 
 mockMvc.perform(put("/api/contatos/12")
+.with(csrf())
 .contentType(MediaType.APPLICATION_JSON)
 .content("{\"nome\":\"Carlos Atualizado\",\"numero\":\"(41) 91111-1111\"}"))
 .andExpect(status().isOk())
@@ -100,6 +104,7 @@ void naoDeveAtualizarContatoInexistenteViaApi() throws Exception {
 when(contatoRepository.findByCodigo(999L)).thenReturn(null);
 
 mockMvc.perform(put("/api/contatos/999")
+.with(csrf())
 .contentType(MediaType.APPLICATION_JSON)
 .content("{\"nome\":\"X\",\"numero\":\"(11) 99999-0000\"}"))
 .andExpect(status().isNotFound());
@@ -113,7 +118,7 @@ void deveExcluirContatoViaApi() throws Exception {
 Contato contato = contato(20L, "Joana", "(11) 90000-1111");
 when(contatoRepository.findByCodigo(20L)).thenReturn(contato);
 
-mockMvc.perform(delete("/api/contatos/20"))
+mockMvc.perform(delete("/api/contatos/20").with(csrf()))
 .andExpect(status().isNoContent());
 
 verify(contatoRepository, times(1)).delete(contato);

@@ -87,10 +87,14 @@ Base: `http://localhost:8080/api/contatos`
 - `PUT /api/contatos/{codigo}` *(autenticado)*
 - `DELETE /api/contatos/{codigo}` *(autenticado)*
 
-Exemplo de criação:
+As operações de escrita da API exigem autenticação e token CSRF.
+
+Exemplo de criação (com sessão/cookie e CSRF):
 
 ```bash
-curl -u admin:admin123 -X POST http://localhost:8080/api/contatos \
+curl -s -c cookies.txt http://localhost:8080/api/contatos > /dev/null
+TOKEN=$(awk '$6 == "XSRF-TOKEN" {print $7}' cookies.txt)
+curl -u admin:admin123 -b cookies.txt -H "X-XSRF-TOKEN: $TOKEN" -X POST http://localhost:8080/api/contatos \
   -H 'Content-Type: application/json' \
   -d '{"nome":"Maria","numero":"(11) 99999-9999"}'
 ```

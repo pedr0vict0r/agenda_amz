@@ -20,10 +20,10 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfig {
 
-@Value("${APP_SECURITY_USERNAME:admin}")
+@Value("${APP_SECURITY_USERNAME}")
 private String username;
 
-@Value("${APP_SECURITY_PASSWORD:admin123}")
+@Value("${APP_SECURITY_PASSWORD}")
 private String password;
 
 @Bean
@@ -33,6 +33,9 @@ return new BCryptPasswordEncoder();
 
 @Bean
 public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
+if (username == null || username.isBlank() || password == null || password.isBlank()) {
+throw new IllegalStateException("APP_SECURITY_USERNAME e APP_SECURITY_PASSWORD devem ser definidos.");
+}
 UserDetails user = User.builder().username(username).password(passwordEncoder.encode(password)).roles("EDITOR")
 .build();
 return new InMemoryUserDetailsManager(user);

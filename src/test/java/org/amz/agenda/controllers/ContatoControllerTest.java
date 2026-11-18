@@ -24,11 +24,13 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.amz.agenda.config.SecurityConfig;
 
 @WebMvcTest(ContatoController.class)
 @Import(SecurityConfig.class)
+@TestPropertySource(properties = { "APP_SECURITY_USERNAME=test-editor", "APP_SECURITY_PASSWORD=test-password" })
 class ContatoControllerTest {
 
 @Autowired

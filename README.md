@@ -44,10 +44,10 @@ Gerenciar contatos com operações básicas de CRUD:
 
 Operações de escrita (UI e API) exigem autenticação com perfil `EDITOR`.
 
-Variáveis opcionais:
+Variáveis obrigatórias:
 
-- `APP_SECURITY_USERNAME` (padrão: `admin`)
-- `APP_SECURITY_PASSWORD` (padrão: `admin123`)
+- `APP_SECURITY_USERNAME`
+- `APP_SECURITY_PASSWORD`
 
 ## Configuração de banco
 
@@ -92,9 +92,11 @@ As operações de escrita da API exigem autenticação e token CSRF.
 Exemplo de criação (com cookie/token CSRF):
 
 ```bash
+export APP_SECURITY_USERNAME=editor
+export APP_SECURITY_PASSWORD='troque-esta-senha-forte'
 curl -s -c cookies.txt http://localhost:8080/api/contatos > /dev/null
 TOKEN=$(awk '$6 == "XSRF-TOKEN" {print $7}' cookies.txt)
-curl -u admin:admin123 -b cookies.txt -H "X-XSRF-TOKEN: $TOKEN" -X POST http://localhost:8080/api/contatos \
+curl -u "$APP_SECURITY_USERNAME:$APP_SECURITY_PASSWORD" -b cookies.txt -H "X-XSRF-TOKEN: $TOKEN" -X POST http://localhost:8080/api/contatos \
   -H 'Content-Type: application/json' \
   -d '{"nome":"Maria","numero":"(11) 99999-9999"}'
 ```

@@ -17,6 +17,7 @@ import org.amz.agenda.models.Contato;
 import org.amz.agenda.repository.ContatoRepository;
 import org.amz.agenda.config.SecurityConfig;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -66,11 +67,14 @@ when(contatoRepository.save(any(Contato.class))).thenReturn(salvo);
 mockMvc.perform(post("/api/contatos")
 .with(csrf())
 .contentType(MediaType.APPLICATION_JSON)
-.content("{\"nome\":\"Paulo\",\"numero\":\"(41) 98888-7777\"}"))
+.content("{\"codigo\":999,\"nome\":\"Paulo\",\"numero\":\"(41) 98888-7777\"}"))
 .andExpect(status().isCreated())
 .andExpect(jsonPath("$.codigo").value(11));
 
 verify(contatoRepository, times(1)).save(any(Contato.class));
+ArgumentCaptor<Contato> contatoCaptor = ArgumentCaptor.forClass(Contato.class);
+verify(contatoRepository).save(contatoCaptor.capture());
+org.junit.jupiter.api.Assertions.assertEquals(0L, contatoCaptor.getValue().getCodigo());
 }
 
 @Test

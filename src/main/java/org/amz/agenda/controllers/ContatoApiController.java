@@ -57,6 +57,7 @@ return ResponseEntity.ok(contato);
 
 @PostMapping
 public ResponseEntity<Contato> criar(@Valid @RequestBody Contato contato) {
+contato.setCodigo(0L);
 Contato salvo = contatoRepository.save(contato);
 LOGGER.info("API: contato criado. codigo={} nome={}", salvo.getCodigo(), salvo.getNome());
 return ResponseEntity.status(HttpStatus.CREATED).body(salvo);

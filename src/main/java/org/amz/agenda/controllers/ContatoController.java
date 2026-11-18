@@ -40,6 +40,7 @@ if (result.hasErrors()) {
 attributes.addFlashAttribute("msgErro", "Verifique os campos!");
 return "redirect:/cadastrarContato";
 }
+contato.setCodigo(0L);
 cr.save(contato);
 LOGGER.info("Contato cadastrado. nome={}", contato.getNome());
 attributes.addFlashAttribute("msgSucesso", "Contato adicionado com sucesso!");

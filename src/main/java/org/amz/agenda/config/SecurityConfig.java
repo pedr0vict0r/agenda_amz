@@ -41,8 +41,9 @@ return new InMemoryUserDetailsManager(user);
 @Bean
 @Order(1)
 public SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
+CookieCsrfTokenRepository csrfTokenRepository = new CookieCsrfTokenRepository();
 http.antMatcher("/api/**")
-.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
+.csrf(csrf -> csrf.csrfTokenRepository(csrfTokenRepository))
 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 .authorizeRequests(auth -> auth.antMatchers(HttpMethod.GET, "/api/contatos/**").permitAll().anyRequest().hasRole("EDITOR"))
 .httpBasic(Customizer.withDefaults());

@@ -17,6 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import org.amz.agenda.models.Contato;
 import org.amz.agenda.repository.ContatoRepository;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -52,12 +53,16 @@ mockMvc.perform(get("/contatos"))
 void deveCadastrarContatoComDadosValidos() throws Exception {
 mockMvc.perform(post("/cadastrarContato")
 .with(csrf())
+.param("codigo", "123")
 .param("nome", "Maria Silva")
 .param("numero", "(11) 99999-9999"))
 .andExpect(status().is3xxRedirection())
 .andExpect(redirectedUrl("/cadastrarContato"));
 
 verify(contatoRepository, times(1)).save(any(Contato.class));
+ArgumentCaptor<Contato> contatoCaptor = ArgumentCaptor.forClass(Contato.class);
+verify(contatoRepository).save(contatoCaptor.capture());
+org.junit.jupiter.api.Assertions.assertEquals(0L, contatoCaptor.getValue().getCodigo());
 }
 
 @Test

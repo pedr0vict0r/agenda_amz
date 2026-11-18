@@ -89,7 +89,7 @@ Base: `http://localhost:8080/api/contatos`
 
 As operações de escrita da API exigem autenticação e token CSRF.
 
-Exemplo de criação (com sessão/cookie e CSRF):
+Exemplo de criação (com cookie/token CSRF):
 
 ```bash
 curl -s -c cookies.txt http://localhost:8080/api/contatos > /dev/null
